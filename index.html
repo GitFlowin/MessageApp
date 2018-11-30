@@ -1,0 +1,57 @@
+<!doctype <!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Node Message App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous" async></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous" async></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous" async></script>
+        <script src="/socket.io/socket.io.js/"></script>
+        <script async>
+            var socket = io();
+            $(() => {
+                $("#send").click(() => {
+                    // Value from id name and message from body.
+                    var message = { name: $("#name").val(), message: $("#message").val() };
+                    postMessage(message);
+                });
+                getMessages();
+            });
+            // Watches for incoming messages
+            socket.on('message', addMessage);
+            // Add messages to div id = "messages"
+            function addMessage(message) {
+                $("#messages").append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`);
+            };
+            
+            function getMessages() {
+                $.get('http://localhost:3000/messages', (data) => {
+                    data.forEach(addMessage);
+                });
+            };
+
+            function postMessage(message) {
+                $.post('http://localhost:3000/messages', message);
+            };
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <br>
+            <div class="jumbotrom">
+                <h1 class="display-4">Send Message</h1>
+                <br>
+                <input id="name" class="form-control" placeholder="Name">
+                <br>
+                <textarea id="message" class="form-control" placeholder="Message"></textarea>
+                <br>
+                <button id="send" class="btn btn-success">Send</button>
+            </div>
+            <br>
+            <div id="messages"></div>
+        </div>
+    </body>
+</html>>
